@@ -1,0 +1,54 @@
+Sending build context to Docker daemon  67.58kB
+Step 1/12 : ARG PYTHON_VERSION=3.11.4
+Step 2/12 : FROM python:${PYTHON_VERSION}-slim as base
+3.11.4-slim: Pulling from library/python
+52d2b7f179e3: Pulling fs layer
+2b8a9a2240c1: Pulling fs layer
+051d6521462a: Pulling fs layer
+fce84b1f897c: Pulling fs layer
+46233543d8c2: Pulling fs layer
+46233543d8c2: Waiting
+fce84b1f897c: Waiting
+2b8a9a2240c1: Verifying Checksum
+2b8a9a2240c1: Download complete
+fce84b1f897c: Verifying Checksum
+fce84b1f897c: Download complete
+46233543d8c2: Download complete
+051d6521462a: Download complete
+52d2b7f179e3: Download complete
+52d2b7f179e3: Pull complete
+2b8a9a2240c1: Pull complete
+051d6521462a: Pull complete
+fce84b1f897c: Pull complete
+46233543d8c2: Pull complete
+Digest: sha256:17d62d681d9ecef20aae6c6605e9cf83b0ba3dc247013e2f43e1b5a045ad4901
+Status: Downloaded newer image for python:3.11.4-slim
+ ---> 596e0d6b34df
+Step 3/12 : ENV PYTHONDONTWRITEBYTECODE=1
+ ---> Running in 86b5919e5214
+Removing intermediate container 86b5919e5214
+ ---> 1c359ed027b2
+Step 4/12 : ENV PYTHONUNBUFFERED=1
+ ---> Running in b2d5536d754e
+Removing intermediate container b2d5536d754e
+ ---> 77182cba8892
+Step 5/12 : WORKDIR /app
+ ---> Running in 35441ce441ad
+Removing intermediate container 35441ce441ad
+ ---> ab52957ae1d5
+Step 6/12 : ARG UID=10001
+ ---> Running in 95c907cb32fa
+Removing intermediate container 95c907cb32fa
+ ---> 9c5b61f35ebf
+Step 7/12 : RUN adduser     --disabled-password     --gecos ""     --home "/nonexistent"     --shell "/sbin/nologin"     --no-create-home     --uid "${UID}"     appuser
+ ---> Running in 74069e9145e9
+[91madduser: Warning: The home dir /nonexistent you specified can't be accessed: No such file or directory
+[0mAdding user `appuser' ...
+Adding new group `appuser' (10001) ...
+Adding new user `appuser' (10001) with group `appuser (10001)' ...
+Not creating `/nonexistent'.
+Adding new user `appuser' to supplemental / extra groups `users' ...
+Adding user `appuser' to group `users' ...
+Removing intermediate container 74069e9145e9
+ ---> 522ee011fad1
+Step 8/12 : RUN --mount=type=cache,target=/root/.cache/pip     --mount=type=bind,source=requirements.txt,target=requirements.txt     python3 -m pip install -r requirements.txt
