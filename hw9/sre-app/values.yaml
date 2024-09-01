@@ -1,0 +1,36 @@
+replicaCount: 1
+
+image:
+  sreApp:
+    repository: belnik/sre-app
+    tag: latest
+    pullPolicy: IfNotPresent
+  sreAppPy:
+    repository: belnik/sre-app-py
+    tag: latest
+    pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    memory: "512Mi"
+    cpu: "100m"
+
+service:
+  type: ClusterIP
+  port: "80"
+  appPyPort: "3000"
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: sre-app.local
+
+env:
+  sreApp:
+    PORT: "8080"
+    ADMIN_USER: "user"
+    ADMIN_PASS: "spassword"
+  sreAppPy:
+    PORT: "3000"
+    APP_USER: "user"
+    APP_PASSWORD: "password"

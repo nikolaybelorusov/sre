@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: sre-app
+        image: {{ .Values.image.sreApp.repository }}:{{ .Values.image.sreApp.tag }}
+        imagePullPolicy: {{ .Values.image.sreApp.pullPolicy }}
+        resources:
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+            cpu: {{ .Values.resources.limits.cpu | quote}}
+        ports:
+        - containerPort: {{ .Values.env.sreApp.PORT }}
+        env:
+        - name: PORT
+          value: {{ .Values.env.sreApp.PORT | quote }}
+        - name: ADMIN_USER
+          value: {{ .Values.env.sreApp.ADMIN_USER }}
+        - name: ADMIN_PASS
+          value: {{ .Values.env.sreApp.ADMIN_PASS }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.env.sreApp.PORT  }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.env.sreApp.PORT}}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+
+      - name: sre-app-py
+        image: {{ .Values.image.sreAppPy.repository }}:{{ .Values.image.sreAppPy.tag }}
+        imagePullPolicy: {{ .Values.image.sreAppPy.pullPolicy }}
+        resources:
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+            cpu: {{ .Values.resources.limits.cpu | quote }}
+        ports:
+        - containerPort: {{ .Values.env.sreAppPy.PORT  }}
+        env:
+        - name: PORT
+          value: {{ .Values.env.sreAppPy.PORT | quote }}
+        - name: APP_USER
+          value: {{ .Values.env.sreAppPy.APP_USER }}
+        - name: APP_PASSWORD
+          value: {{ .Values.env.sreAppPy.APP_PASSWORD }}
+
